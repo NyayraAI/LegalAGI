@@ -1,0 +1,31 @@
+[{
+        "section": "IPC 302",
+        "title": "Punishment for murder",
+        "description": "Whoever commits murder shall be punished with death, or imprisonment for life, and shall also be liable to fine."
+    },
+    {
+        "section": "IPC 307",
+        "title": "Attempt to murder",
+        "description": "Whoever does any act with such intention or knowledge, and under such circumstances that, if he by that act caused death, he would be guilty of murder, shall be punished with imprisonment up to ten years, and shall also be liable to fine."
+    },
+    {
+        "section": "IPC 376",
+        "title": "Punishment for rape",
+        "description": "A person who commits rape shall be punished with rigorous imprisonment of not less than ten years, which may extend to life, and shall also be liable to fine."
+    },
+    {
+        "section": "IPC 420",
+        "title": "Cheating and dishonestly inducing delivery of property",
+        "description": "Whoever cheats and dishonestly induces any person to deliver any property shall be punished with imprisonment up to seven years and shall also be liable to fine."
+    },
+    {
+        "section": "IPC 498A",
+        "title": "Cruelty by husband or relatives of husband",
+        "description": "Husband or relative of husband of a woman subjecting her to cruelty shall be punished with imprisonment up to three years and shall also be liable to fine."
+    },
+    {
+        "section": "IPC 120B",
+        "title": "Punishment of criminal conspiracy",
+        "description": "Whoever is a party to a criminal conspiracy to commit an offence punishable with death, imprisonment for life or rigorous imprisonment for a term of two years or more shall be punished as if he had abetted such offence."
+    }
+]

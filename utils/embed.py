@@ -11,7 +11,7 @@ except Exception as e:
     print(f"❌ Failed to load model: {e}")
     model = None
 
-def embed_question(text: str) -> list:
+def embed_text(text: str) -> list:
     if model is None:
         print("❌ Model not loaded, cannot create embedding")
         return []
