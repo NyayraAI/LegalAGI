@@ -1,5 +1,7 @@
 from sentence_transformers import SentenceTransformer
 import os
+import asyncio
+import concurrent.futures
 
 print("🔄 Loading SentenceTransformer model...")
 
@@ -26,3 +28,9 @@ def embed_text(text: str) -> list:
         import traceback
         traceback.print_exc()
         return []
+
+async def embed_text_async(text: str) -> list:
+    loop = asyncio.get_running_loop()
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        # Fix: Call embed_text, not embed_text_async (which would cause infinite recursion)
+        return await loop.run_in_executor(pool, embed_text, text)

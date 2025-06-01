@@ -1,10 +1,12 @@
 from groq import Groq
 import os
+import asyncio
+import concurrent.futures
 
 groq_key = os.getenv("GROQ_API_KEY")
 client = Groq(api_key=groq_key)
 
-def ask_llm(context: str, question: str) -> str:
+def ask_llm_sync(context: str, question: str) -> str:
     try:
         chat_completion = client.chat.completions.create(
             model="llama3-70b-8192",  # use your preferred model
@@ -25,3 +27,8 @@ def ask_llm(context: str, question: str) -> str:
         return chat_completion.choices[0].message.content
     except Exception as e:
         return f"❌ LLM error: {e}"
+    
+async def ask_llm(context: str, question: str) -> str:
+    loop = asyncio.get_running_loop()
+    with concurrent.futures.ThreadPoolExecutor() as pool:
+        return await loop.run_in_executor(pool, ask_llm_sync, context, question)
