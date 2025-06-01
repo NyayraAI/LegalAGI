@@ -1,32 +1,3 @@
-# from sentence_transformers import SentenceTransformer
-# from supabase_client import supabase
-# import json
-
-# # Load the MiniLM model
-# model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
-
-# # Load your JSON data
-# with open('data/bare_acts.json', 'r', encoding='utf-8') as f:
-#     docs = json.load(f)
-
-# # Go through each document
-# for doc in docs:
-#     content = doc["content"]
-    
-#     # Optional: Chunk long content (here, skipping for simplicity)
-#     # Get embedding
-#     embedding = model.encode(content).tolist()
-    
-#     # Insert into Supabase
-#     try:
-#         response = supabase.table("documents").insert({
-#             "content": content,
-#             "embedding": embedding
-#         }).execute()
-#         print("✅ Inserted:", content[:60], "...")
-#     except Exception as e:
-#         print("❌ Error inserting:", e)
-
 import os
 import json
 from pathlib import Path
