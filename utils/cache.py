@@ -1,24 +1,3 @@
-# from diskcache import Cache
-# import hashlib
-
-# cache = Cache("cache_dir")
-
-# def get_cached_embedding(text):
-#     return cache.get(f"embed:{text}")
-
-# def set_cached_embedding(text, embedding):
-#     cache.set(f"embed:{text}", embedding)
-
-# def get_cached_match(embedding):
-#     # Convert embedding tuple to a hash for more efficient caching
-#     embedding_hash = hashlib.md5(str(embedding).encode()).hexdigest()
-#     return cache.get(f"match:{embedding_hash}")
-
-# def set_cached_match(embedding, matches):
-#     # Convert embedding tuple to a hash for more efficient caching
-#     embedding_hash = hashlib.md5(str(embedding).encode()).hexdigest()
-#     cache.set(f"match:{embedding_hash}", matches)
-
 import redis
 import json
 import hashlib

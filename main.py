@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from utils.embed import embed_text_async
 from utils.supabase_client import supabase, TABLE_NAME
 from utils.llm import ask_llm
-from utils.cache import get_cached_embedding, set_cached_embedding, get_cached_match, set_cached_match
+from utils.cache import get_cached_embedding, set_cached_embedding, get_cached_match, set_cached_match, clear_cache, get_cache_stats
 from loguru import logger
 import sys
 import os
@@ -16,9 +16,11 @@ logger.add(sys.stderr, level="INFO")
 
 app = FastAPI()
 
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://your-vercel-app.vercel.app"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -75,3 +77,21 @@ async def ask_question(request: QueryRequest, x_api_key: str = Header(None)):
     except Exception as e:
         logger.exception("❌ Unexpected error")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Optional: Cache management endpoints (remove in production if not needed)
+@app.get("/cache/stats")
+async def cache_stats(x_api_key: str = Header(None)):
+    if x_api_key != BOT_API_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    return get_cache_stats()
+
+@app.delete("/cache/clear")
+async def clear_cache_endpoint(x_api_key: str = Header(None)):
+    if x_api_key != BOT_API_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    clear_cache()
+    return {"message": "Cache cleared successfully"}
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "cache": get_cache_stats()}
