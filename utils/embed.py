@@ -1,7 +1,8 @@
-from sentence_transformers import SentenceTransformer
-import os
 import asyncio
 import concurrent.futures
+import os
+
+from sentence_transformers import SentenceTransformer
 
 print("🔄 Loading SentenceTransformer model...")
 
@@ -13,11 +14,12 @@ except Exception as e:
     print(f"❌ Failed to load model: {e}")
     model = None
 
+
 def embed_text(text: str) -> list:
     if model is None:
         print("❌ Model not loaded, cannot create embedding")
         return []
-    
+
     try:
         print(f"🔄 Creating embedding for: '{text[:50]}...'")
         embedding = model.encode(text)
@@ -26,8 +28,10 @@ def embed_text(text: str) -> list:
     except Exception as e:
         print("❌ Local embedding error:", e)
         import traceback
+
         traceback.print_exc()
         return []
+
 
 async def embed_text_async(text: str) -> list:
     loop = asyncio.get_running_loop()

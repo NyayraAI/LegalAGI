@@ -1,5 +1,7 @@
 from utils.embed import embed_text
-from utils.supabase_client import supabase, TABLE_NAME
+# from utils.supabase_client import TABLE_NAME, supabase
+from utils.supabase_client import supabase
+
 
 def query_legal_docs(question: str, match_count: int = 5):
     print(f"\n🔍 Querying for: '{question}'")
@@ -12,11 +14,14 @@ def query_legal_docs(question: str, match_count: int = 5):
 
     # Step 2: Perform similarity search in Supabase
     try:
-        response = supabase.rpc("match_documents", {
-            "match_count": 5,
-            "match_threshold": 0.75,
-            "query_embedding": query_embedding
-        }).execute()
+        response = supabase.rpc(
+            "match_documents",
+            {
+                "match_count": 5,
+                "match_threshold": 0.75,
+                "query_embedding": query_embedding,
+            },
+        ).execute()
 
         matches = response.data
         if not matches:
@@ -33,8 +38,10 @@ def query_legal_docs(question: str, match_count: int = 5):
     except Exception as e:
         print("❌ Query error:", e)
         import traceback
+
         traceback.print_exc()
         return []
+
 
 # Run the query directly from CLI (for testing)
 if __name__ == "__main__":

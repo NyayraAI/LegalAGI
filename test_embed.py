@@ -8,6 +8,7 @@ print("🔑 API KEY:", os.getenv("GROQ_API_KEY"))
 try:
     print("📦 Testing sentence_transformers import...")
     from sentence_transformers import SentenceTransformer
+
     print("✅ sentence_transformers imported successfully")
 except ImportError as e:
     print("❌ ImportError:", e)
@@ -21,6 +22,7 @@ except Exception as e:
 try:
     print("📦 Testing utils.embed import...")
     from utils.embed import embed_question
+
     print("✅ utils.embed imported successfully")
 except ImportError as e:
     print("❌ ImportError:", e)
@@ -36,17 +38,18 @@ question = "What is the punishment for theft under Indian Penal Code?"
 
 try:
     embedding = embed_question(question)
-    
+
     if embedding:
         print("✅ Embedding created successfully!")
         print(f"📊 Embedding length: {len(embedding)}")
         print("🔢 First 10 values:", embedding[:10])
     else:
         print("❌ Embedding is empty - check embed.py for errors")
-        
+
 except Exception as e:
     print("❌ Error during embedding:", e)
     import traceback
+
     traceback.print_exc()
 
 print("🏁 Test completed!")
