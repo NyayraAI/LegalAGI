@@ -60,7 +60,6 @@ Thank you for your interest in contributing! This project is built in public and
 
 - Place new legal data files (statutes, case law, etc.) in the `data/` directory as JSON.
 - Use a clear, consistent schema (see existing files for examples).
-- Run `python store.py` to embed and store new data in Supabase.
 
 ---
 

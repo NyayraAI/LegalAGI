@@ -110,64 +110,37 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
    - **Alternative Docs**: http://localhost:8000/redoc
    - **Health Check**: http://localhost:8000/health
 
-## 📊 Data Ingestion Workflow
+## Data Ingestion & API Endpoints
 
-### 1. Document Collection
+- **Automated Google Drive Polling:**
+  - The system polls your configured Google Drive folder for new PDFs.
+  - New files are downloaded to `data/raw_pdfs/`.
+**Format Support**: PDF documents (JSON support planned)
 
-- **Google Drive Integration**: Automated polling of configured folders
-- **File Processing**: Downloads PDFs to `data/raw_pdfs/`
-- **Format Support**: PDF documents (JSON support planned)
+- **Automatic Chunking & Embedding:**
 
-### 2. Processing Pipeline
+  - PDFs are chunked and embedded automatically.
+  - Chunks and embeddings are stored locally.
 
-```bash
-# Process and embed documents
-python store.py
+- **Asynchronous Embedding Sync:**
 
-# Test embeddings functionality
-python test_embed.py
-```
+  - Local embeddings are periodically synced to Supabase (if enabled).
 
-### 3. Data Synchronization
+- **Key API Endpoints:**
+  - `/ask` — Query the system with a legal question.
+  - `/embeddings/create` — Create/store a new embedding.
+  - `/embeddings/stats` — Get embedding stats.
+  - `/embeddings/clear` — Clear embeddings.
+  - `/sync-embeddings` — Sync local embeddings to Supabase.
+  - `/test/scan` — Manually trigger a scan for new PDFs.
+  - `/system/info` — System and storage info.
+  - `/data/stats` — Data statistics.
+  - `/data/reload` — Reload chunked data.
+  - `/debug/stored-embeddings` — Inspect stored embeddings.
+  - `/debug/reindex-documents` — Re-chunk and re-embed all PDFs.
+  - `/health` — Health check endpoint.
 
-- **Local Storage**: Fast retrieval from local embeddings
-- **Supabase Sync**: Async background synchronization
-- **Incremental Updates**: Only processes new/modified documents
-
-## 🔧 Development Commands
-
-### Running the Application
-
-```bash
-# Development server with auto-reload
-uvicorn main:app --reload
-
-# Production server
-uvicorn main:app --host 0.0.0.0 --port 8000
-```
-
-### Data Management
-
-```bash
-# Store and embed new documents
-python store.py
-
-# Test embedding functionality
-python test_embed.py
-
-# Query the system via CLI
-python query.py
-```
-
-### Testing
-
-```bash
-# Run test suite
-pytest
-
-# Run with coverage
-pytest --cov=app tests/
-```
+---
 
 ## 📁 Project Structure
 
