@@ -1,4 +1,4 @@
-# Contributing to NyaayraAI Legal RAG
+# Contributing to NyayraAI Legal RAG
 
 Thank you for your interest in contributing! This project is built in public and welcomes contributions from everyone—developers, lawyers, designers, and enthusiasts.
 

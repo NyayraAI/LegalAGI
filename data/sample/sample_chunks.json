@@ -1,0 +1,9 @@
+[{
+    "text": "This is a sample chunk of a legal document.",
+    "chunk_id": "chunk_0",
+    "metadata": {
+        "source": "sample.pdf",
+        "page": 1,
+        "type": "contract"
+    }
+}]

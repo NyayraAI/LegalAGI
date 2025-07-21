@@ -1,28 +1,33 @@
-import asyncio
-import concurrent.futures
 import os
-import sys
-
-from fastapi import FastAPI, Header, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
-from pydantic import BaseModel
+from dotenv import load_dotenv
+from pathlib import Path
 
-from utils.cache import (clear_cache, get_cache_stats, get_cached_embedding,
-                         get_cached_match, set_cached_embedding,
-                         set_cached_match)
-from utils.embed import embed_text_async
-from utils.llm import ask_llm
-# from utils.supabase_client import TABLE_NAME, supabase
-from utils.supabase_client import supabase
+# Load environment
+env_file = Path(".env")
+if env_file.exists():
+    load_dotenv(override=True)
 
-logger.remove()
-logger.add(sys.stderr, level="INFO")
+# Import components
+from app.core.lifespan import lifespan
+from app.core.core_middleware import setup_logging
+from app.routers import health, query, sync, admin, embeddings
 
-app = FastAPI()
+# Setup logging
+setup_logging()
 
+# Create FastAPI app
+app = FastAPI(
+    lifespan=lifespan,
+    title="Legal RAG Backend",
+    version="2.0.0",
+    description="Enhanced Legal RAG system with hybrid embedding search",
+)
+
+# Add CORS middleware
 ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
@@ -31,90 +36,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-BOT_API_KEY = os.getenv("BOT_API_KEY")
-
-
-class QueryRequest(BaseModel):
-    question: str
-
-
-# Async wrapper for supabase.rpc
-async def fetch_matches(embedding):
-    loop = asyncio.get_running_loop()
-    with concurrent.futures.ThreadPoolExecutor() as pool:
-
-        def call_rpc():
-            return supabase.rpc(
-                "match_documents",
-                {
-                    "match_count": 1,
-                    "match_threshold": 0.78,
-                    "query_embedding": embedding,
-                },
-            ).execute()
-
-        return await loop.run_in_executor(pool, call_rpc)
+# Include routers
+app.include_router(health.router, tags=["health"])
+app.include_router(query.router, prefix="/api", tags=["query"])
+app.include_router(sync.router, prefix="/api", tags=["sync"])
+app.include_router(admin.router, prefix="/api", tags=["admin"])
+app.include_router(embeddings.router, prefix="/api", tags=["embeddings"])
 
 
 @app.get("/")
 async def root():
+    from utils.core.config import get_config
+    from app.dependencies import get_data_loader, get_drive_sync
+
+    config = get_config()
+    data_loader = get_data_loader()
+    drive_sync = get_drive_sync()
+
     return {
-        "message": "Welcome to the NyaayraAI Legal AGI. Go to /docs for interactive docs."
+        "message": "Welcome to the NyayraAI Backend v2.0",
+        "storage_mode": config.embedding_storage,
+        "features": {
+            "google_drive_sync": drive_sync is not None,
+            "chunked_data_ready": len(data_loader.load_all_chunks()) > 0,
+        },
+        "docs": "/docs",
     }
 
 
-@app.post("/ask")
-async def ask_question(request: QueryRequest, x_api_key: str = Header(None)):
-    if x_api_key != BOT_API_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized")
+if __name__ == "__main__":
+    import uvicorn
 
-    question = request.question
-    try:
-        # Check cache for embedding
-        embedding = get_cached_embedding(question)
-        if not embedding:
-            # Get the actual embedding result, not the coroutine
-            embedding = await embed_text_async(question)
-            set_cached_embedding(question, embedding)
-
-        # Check cache for matches using embedding as key
-        matches = get_cached_match(tuple(embedding))
-        if not matches:
-            # Fetch matches asynchronously
-            response = await fetch_matches(embedding)
-            matches = response.data
-            set_cached_match(tuple(embedding), matches)
-
-        if not matches:
-            return {"answer": "No relevant documents found.", "matches": []}
-
-        context = "\n\n".join([doc["content"] for doc in matches])
-
-        answer = await ask_llm(context, question)
-
-        return {"answer": answer, "matches": matches}
-
-    except Exception as e:
-        logger.exception("❌ Unexpected error")
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-# Optional: Cache management endpoints (remove in production if not needed)
-@app.get("/cache/stats")
-async def cache_stats(x_api_key: str = Header(None)):
-    if x_api_key != BOT_API_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    return get_cache_stats()
-
-
-@app.delete("/cache/clear")
-async def clear_cache_endpoint(x_api_key: str = Header(None)):
-    if x_api_key != BOT_API_KEY:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    clear_cache()
-    return {"message": "Cache cleared successfully"}
-
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy", "cache": get_cache_stats()}
+    uvicorn.run(app, host="0.0.0.0", port=8000)

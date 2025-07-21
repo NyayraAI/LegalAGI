@@ -1,0 +1,2 @@
+This is a placeholder for a sample PDF.
+To test the pipeline, place a sample legal PDF here.

@@ -11,7 +11,7 @@ client = Groq(api_key=groq_key)
 def ask_llm_sync(context: str, question: str) -> str:
     try:
         chat_completion = client.chat.completions.create(
-            model="llama3-70b-8192",  # use your preferred model
+            model="llama3-70b-8192",  
             messages=[
                 {
                     "role": "system",
@@ -26,10 +26,12 @@ def ask_llm_sync(context: str, question: str) -> str:
                 },
             ],
         )
-        return chat_completion.choices[0].message.content
+        content = chat_completion.choices[0].message.content
+        if content is None:
+            return "❌ LLM error: No response from LLM."
+        return content
     except Exception as e:
         return f"❌ LLM error: {e}"
-
 
 async def ask_llm(context: str, question: str) -> str:
     loop = asyncio.get_running_loop()

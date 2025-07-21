@@ -1,0 +1,2 @@
+import numpy as np
+np.save("data/sample/sample_embeddings.npy", np.random.rand(1, 384))
