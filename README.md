@@ -39,15 +39,15 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
 
 ## 🛠️ Technology Stack
 
-| Component | Technology | Purpose |
-|-----------|------------|---------|
-| **Backend Framework** | FastAPI | High-performance async API |
-| **Database** | Supabase (PostgreSQL) | Document and vector storage |
-| **Caching** | Redis | Query and embedding caching |
-| **Embeddings** | SentenceTransformers | Local text embeddings |
-| **LLM Provider** | Groq API | Language model inference |
-| **Runtime** | Python 3.9+ | Core application runtime |
-| **Server** | Uvicorn | ASGI web server |
+| Component             | Technology            | Purpose                     |
+| --------------------- | --------------------- | --------------------------- |
+| **Backend Framework** | FastAPI               | High-performance async API  |
+| **Database**          | Supabase (PostgreSQL) | Document and vector storage |
+| **Caching**           | Redis                 | Query and embedding caching |
+| **Embeddings**        | SentenceTransformers  | Local text embeddings       |
+| **LLM Provider**      | Groq API              | Language model inference    |
+| **Runtime**           | Python 3.9+           | Core application runtime    |
+| **Server**            | Uvicorn               | ASGI web server             |
 
 ## 🚀 Quick Start
 
@@ -61,12 +61,14 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/NyayraAI/rag-backend-python.git
    cd rag-backend-python
    ```
 
 2. **Set up Python environment**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -74,28 +76,31 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
    ```
 
 3. **Configure environment variables**
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Edit `.env` with your configuration:
+
    ```env
    # Database Configuration
    SUPABASE_URL=https://your-project.supabase.co
    SUPABASE_ANON_KEY=your-supabase-anon-key
-   
+
    # LLM Configuration
    GROQ_API_KEY=your-groq-api-key
-   
+
    # Optional: Caching
    REDIS_URL=redis://localhost:6379
-   
+
    # Security
    BOT_API_KEY=your-internal-api-key
    ALLOWED_ORIGINS=http://localhost:3000,https://your-frontend.com
    ```
 
 4. **Start the application**
+
    ```bash
    uvicorn main:app --reload
    ```
@@ -108,11 +113,13 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
 ## 📊 Data Ingestion Workflow
 
 ### 1. Document Collection
+
 - **Google Drive Integration**: Automated polling of configured folders
 - **File Processing**: Downloads PDFs to `data/raw_pdfs/`
 - **Format Support**: PDF documents (JSON support planned)
 
 ### 2. Processing Pipeline
+
 ```bash
 # Process and embed documents
 python store.py
@@ -122,6 +129,7 @@ python test_embed.py
 ```
 
 ### 3. Data Synchronization
+
 - **Local Storage**: Fast retrieval from local embeddings
 - **Supabase Sync**: Async background synchronization
 - **Incremental Updates**: Only processes new/modified documents
@@ -129,6 +137,7 @@ python test_embed.py
 ## 🔧 Development Commands
 
 ### Running the Application
+
 ```bash
 # Development server with auto-reload
 uvicorn main:app --reload
@@ -138,6 +147,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Data Management
+
 ```bash
 # Store and embed new documents
 python store.py
@@ -150,6 +160,7 @@ python query.py
 ```
 
 ### Testing
+
 ```bash
 # Run test suite
 pytest
@@ -162,23 +173,43 @@ pytest --cov=app tests/
 
 ```
 rag-backend-python/
+│
 ├── app/
 │   ├── __init__.py
-│   ├── main.py                 # FastAPI application
-│   ├── api/                    # API routes
-│   ├── core/                   # Core configuration
-│   ├── models/                 # Pydantic models
-│   ├── services/               # Business logic
-│   └── utils/                  # Utility functions
+│   ├── dependencies.py         # Dependency injection and shared logic
+│   ├── models/                 # Pydantic models for API requests/responses
+│   ├── routers/                # FastAPI routers (API endpoints)
+│   ├── services/               # Business logic/services (embedding, sync, etc.)
+│   └── core/                   # Core app logic (background, middleware, lifespan)
+│
 ├── data/
-│   ├── raw_pdfs/              # Source PDF documents
-│   └── processed/             # Processed document chunks
-├── tests/                     # Test suite
-├── requirements.txt           # Python dependencies
-├── .env.example              # Environment template
-├── README.md                 # This file
-└── LICENSE                   # License information
+│   ├── raw_pdfs/               # (gitignored) Downloaded PDFs from Google Drive
+│   ├── chunked_legal_data/     # (gitignored) Chunked JSONs of processed PDFs
+│   ├── embeddings/             # (gitignored) Local vector embeddings
+│   └── sample/                 # Sample data for quick testing
+│
+├── utils/
+│   ├── core/                   # Embedding, config, LLM, and cache logic
+│   ├── data/                   # Embedding store implementations (local, sync, db)
+│   ├── external/               # Google Drive sync logic
+│   └── processing/             # Chunking and metadata extraction
+│
+├── logs/                       # (gitignored) Application logs
+│
+├── README.md                   # Project overview and instructions
+├── flow.md                     # Data/API flow and deployment checklist
+├── requirements.txt            # Python dependencies
+├── setup.py                    # Project setup script
+└── .gitignore                  # Files/folders to exclude from git
 ```
+
+**Notes:**
+
+- All dev, legacy, and test scripts are excluded from the production repo.
+- Sensitive files (`.env`, `token.json`, `credentials.json`, etc.) are in `.gitignore` and not pushed.
+- All data folders except `sample/` are gitignored for privacy and storage efficiency.
+
+---
 
 ## 🔒 Security & Authentication
 
@@ -187,18 +218,8 @@ rag-backend-python/
 - **Environment Variables**: Sensitive data protection
 - **Input Validation**: Pydantic model validation
 
-## 🚀 Deployment
-
-### Docker Deployment
-```bash
-# Build container
-docker build -t nyayra-rag-backend .
-
-# Run container
-docker run -p 8000:8000 --env-file .env nyayra-rag-backend
-```
-
 ### Environment-Specific Configuration
+
 - **Development**: Auto-reload enabled, debug logging
 - **Staging**: Performance optimizations, error tracking
 - **Production**: Security hardening, monitoring integration
@@ -208,6 +229,7 @@ docker run -p 8000:8000 --env-file .env nyayra-rag-backend
 We welcome contributions from the community! Please see our [Contributing Guidelines](CONTRIBUTING.md) for details.
 
 ### Ways to Contribute
+
 - **🔧 Code**: Backend development, API improvements, performance optimization
 - **📚 Legal Data**: Indian statutes, case law, legal documents
 - **📝 Documentation**: Tutorials, API docs, deployment guides
@@ -215,6 +237,7 @@ We welcome contributions from the community! Please see our [Contributing Guidel
 - **🧪 Testing**: Unit tests, integration tests, performance testing
 
 ### Development Setup
+
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/amazing-feature`
 3. Commit your changes: `git commit -m 'Add amazing feature'`
@@ -236,7 +259,7 @@ See the [LICENSE](LICENSE) file for full details.
 - **🐛 Bug Reports**: [GitHub Issues](https://github.com/NyayraAI/rag-backend-python/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/NyayraAI/rag-backend-python/discussions)
 - **📧 Direct Contact**: [shubhamarora2306@gmail.com](mailto:shubhamarora2306@gmail.com)
-- **🌐 Website**: [NyayraAI](https://nyayra.ai) *(coming soon)*
+- **🌐 Website**: [NyayraAI]() _(coming soon)_
 
 ## 🙏 Acknowledgements
 
@@ -251,7 +274,7 @@ We're grateful to the open-source community and these amazing projects:
 
 <div align="center">
 
-**Built with ❤️ by [Shubham Arora](https://github.com/shubhamarora) and the NyayraAI community**
+**Built with ❤️ by [Shubham Arora](https://github.com/Shubham0523) and the NyayraAI community**
 
 [⭐ Star this project](https://github.com/NyayraAI/LegalAGI) | [🍴 Fork it](https://github.com/NyayraAI/LegalAGI/fork) | [📝 Contribute](CONTRIBUTING.md)
 
