@@ -17,8 +17,9 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
 - **🔗 Supabase Integration** - Scalable document and embedding storage with hosted Postgres
 - **🚀 FastAPI Architecture** - High-performance async REST API with interactive documentation
 - **🔄 Flexible LLM Integration** - Default Groq API with easy provider switching
-- **⚙️ Redis Caching** - Optional in-memory caching for improved performance
 - **📊 Automated Data Pipeline** - Seamless data ingestion and embedding synchronization
+  
+---
 
 ## 🏗️ Architecture
 
@@ -43,7 +44,6 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
 | --------------------- | --------------------- | --------------------------- |
 | **Backend Framework** | FastAPI               | High-performance async API  |
 | **Database**          | Supabase (PostgreSQL) | Document and vector storage |
-| **Caching**           | Redis                 | Query and embedding caching |
 | **Embeddings**        | SentenceTransformers  | Local text embeddings       |
 | **LLM Provider**      | Groq API              | Language model inference    |
 | **Runtime**           | Python 3.9+           | Core application runtime    |
@@ -90,9 +90,6 @@ NyayraAI Legal RAG Backend is an open-source system that democratizes legal know
 
    # LLM Configuration
    GROQ_API_KEY=your-groq-api-key
-
-   # Optional: Caching
-   REDIS_URL=redis://localhost:6379
 
    # Security
    BOT_API_KEY=your-internal-api-key
@@ -162,7 +159,7 @@ rag-backend-python/
 │   └── sample/                 # Sample data for quick testing
 │
 ├── utils/
-│   ├── core/                   # Embedding, config, LLM, and cache logic
+│   ├── core/                   # Embedding, config, LLM logic
 │   ├── data/                   # Embedding store implementations (local, sync, db)
 │   ├── external/               # Google Drive sync logic
 │   └── processing/             # Chunking and metadata extraction
@@ -232,7 +229,7 @@ See the [LICENSE](LICENSE) file for full details.
 - **🐛 Bug Reports**: [GitHub Issues](https://github.com/NyayraAI/rag-backend-python/issues)
 - **💬 Discussions**: [GitHub Discussions](https://github.com/NyayraAI/rag-backend-python/discussions)
 - **📧 Direct Contact**: [shubhamarora2306@gmail.com](mailto:shubhamarora2306@gmail.com)
-- **🌐 Website**: [NyayraAI]() _(coming soon)_
+- **🌐 Website**: [NyayraAI](https://nyayraai.netlify.app/)
 
 ## 🙏 Acknowledgements
 
